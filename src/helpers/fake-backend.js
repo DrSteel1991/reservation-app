@@ -1,5 +1,6 @@
 // array in local storage for registered users
 let users = JSON.parse(localStorage.getItem('users')) || [];
+let clients = JSON.parse(localStorage.getItem('clients')) || [];
     
 export function configureFakeBackend() {
     let realFetch = window.fetch;
@@ -37,11 +38,11 @@ export function configureFakeBackend() {
                     return;
                 }
 
-                // get users
-                if (url.endsWith('/users') && opts.method === 'GET') {
+                // get clients
+                if (url.endsWith('/clients') && opts.method === 'GET') {
                     // check for fake auth token in header and return users if valid, this security is implemented server side in a real application
                     if (opts.headers && opts.headers.Authorization === 'Bearer fake-jwt-token') {
-                        resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(users))});
+                        resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(clients))});
                     } else {
                         // return 401 not authorised if token is null or invalid
                         reject('Unauthorised');
@@ -86,6 +87,22 @@ export function configureFakeBackend() {
                     newUser.id = users.length ? Math.max(...users.map(user => user.id)) + 1 : 1;
                     users.push(newUser);
                     localStorage.setItem('users', JSON.stringify(users));
+
+                    // respond 200 OK
+                    resolve({ ok: true, text: () => Promise.resolve() });
+
+                    return;
+                }
+
+                // register user
+                if (url.endsWith('/clients/addReservation') && opts.method === 'POST') {
+                    // get new user object from post body
+                    let newClient = JSON.parse(opts.body);
+
+                    // save new user
+                    newClient.id = clients.length ? Math.max(...clients.map(client => client.id)) + 1 : 1;
+                    clients.push(newClient);
+                    localStorage.setItem('clients', JSON.stringify(clients));
 
                     // respond 200 OK
                     resolve({ ok: true, text: () => Promise.resolve() });

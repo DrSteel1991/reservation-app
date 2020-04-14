@@ -4,6 +4,7 @@ export const userService = {
     login,
     logout,
     register,
+    addReservation,
     getAll,
     getById,
     update,
@@ -58,6 +59,16 @@ function register(user) {
     };
 
     return fetch(`/users/register`, requestOptions).then(handleResponse);
+}
+
+function addReservation(client) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(client)
+    };
+
+    return fetch(`/clients/addReservation`, requestOptions).then(handleResponse);
 }
 
 function update(user) {

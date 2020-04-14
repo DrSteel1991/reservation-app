@@ -7,6 +7,7 @@ export const userActions = {
     login,
     logout,
     register,
+    addReservation,
     getAll,
     delete: _delete
 };
@@ -59,6 +60,29 @@ function register(user) {
     function request(user) { return { type: userConstants.REGISTER_REQUEST, user } }
     function success(user) { return { type: userConstants.REGISTER_SUCCESS, user } }
     function failure(error) { return { type: userConstants.REGISTER_FAILURE, error } }
+}
+
+function addReservation(client) {
+    return dispatch => {
+        dispatch(request(client));
+
+        userService.addReservation(client)
+            .then(
+                user => { 
+                    dispatch(success());
+                    history.push('/');
+                    dispatch(alertActions.success('Reservation successful'));
+                },
+                error => {
+                    dispatch(failure(error));
+                    dispatch(alertActions.error(error));
+                }
+            );
+    };
+
+    function request(client) { return { type: userConstants.RESERVATION_REQUEST, client } }
+    function success(client) { return { type: userConstants.RESERVATION_SUCCESS, client } }
+    function failure(error) { return { type: userConstants.RESERVATION_FAILURE, error } }
 }
 
 function getAll() {
