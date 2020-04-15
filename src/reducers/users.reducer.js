@@ -1,10 +1,11 @@
 import { userConstants } from '../constants';
 
-export function users(state = {}, action) {
+export function users(state = {items: []}, action) {
   switch (action.type) {
     case userConstants.GETALL_REQUEST:
       return {
-        loading: true
+        loading: true,
+        items: []
       };
     case userConstants.GETALL_SUCCESS:
       return {
@@ -14,6 +15,18 @@ export function users(state = {}, action) {
       return { 
         error: action.error
       };
+    case userConstants.RESERVATION_REQUEST:
+      return { 
+        ...state
+      };
+    case userConstants.RESERVATION_SUCCESS:
+      state.items.push(action.client);
+      return {
+        ...state,
+        items: state.items
+      };
+    case userConstants.RESERVATION_FAILURE:
+      return {};
     case userConstants.DELETE_REQUEST:
       // add 'deleting:true' property to user being deleted
       return {

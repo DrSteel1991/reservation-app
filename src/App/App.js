@@ -10,22 +10,16 @@ import { LoginPage, HomePage, RegisterPage, ReservationPage } from '../pages';
 class App extends React.Component {
     constructor(props) {
         super(props);
-
-        history.listen((location, action) => {
-            // clear alert on location change
-            this.props.clearAlerts();
-        });
     }
 
     render() {
-        const { alert } = this.props;
         return (
             <Router history={history}>
                 <Switch>
                     <PrivateRoute exact path="/" component={HomePage} />
                     <Route path="/login" component={LoginPage} />
-                    <Route path="/register" component={RegisterPage} />
-                    <Route path="/reservations" component={ReservationPage} />
+                    <PrivateRoute path="/register" component={RegisterPage} />
+                    <PrivateRoute path="/reservations" component={ReservationPage} />
                     <Redirect from="*" to="/" />
                 </Switch>
             </Router>
@@ -33,14 +27,4 @@ class App extends React.Component {
     }
 }
 
-function mapState(state) {
-    const { alert } = state;
-    return { alert };
-}
-
-const actionCreators = {
-    clearAlerts: alertActions.clear
-};
-
-const connectedApp = connect(mapState, actionCreators)(App);
-export { connectedApp as App };
+export { App };

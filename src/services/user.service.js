@@ -6,8 +6,6 @@ export const userService = {
     register,
     addReservation,
     getAll,
-    getById,
-    update,
     delete: _delete
 };
 
@@ -39,16 +37,7 @@ function getAll() {
         headers: authHeader()
     };
 
-    return fetch(`/users`, requestOptions).then(handleResponse);
-}
-
-function getById(id) {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
-
-    return fetch(`/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`/clients`, requestOptions).then(handleResponse);
 }
 
 function register(user) {
@@ -71,16 +60,6 @@ function addReservation(client) {
     return fetch(`/clients/addReservation`, requestOptions).then(handleResponse);
 }
 
-function update(user) {
-    const requestOptions = {
-        method: 'PUT',
-        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(user)
-    };
-
-    return fetch(`/users/${user.id}`, requestOptions).then(handleResponse);;
-}
-
 // prefixed function name with underscore because delete is a reserved word in javascript
 function _delete(id) {
     const requestOptions = {
@@ -88,7 +67,7 @@ function _delete(id) {
         headers: authHeader()
     };
 
-    return fetch(`/users/${id}`, requestOptions).then(handleResponse);
+    return fetch(`/clients/${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

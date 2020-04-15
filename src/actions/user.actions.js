@@ -69,7 +69,7 @@ function addReservation(client) {
         userService.addReservation(client)
             .then(
                 user => { 
-                    dispatch(success());
+                    dispatch(success(client));
                     history.push('/');
                     dispatch(alertActions.success('Reservation successful'));
                 },

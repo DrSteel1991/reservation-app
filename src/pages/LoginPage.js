@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { userActions, alertActions } from '../actions';
+import { userActions } from '../actions';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -83,7 +83,7 @@ function LoginPage(props) {
                 {props.alert.message &&
                             <Alert severity={`${props.alert.type}`}>{props.alert.message}</Alert>
                         }
-                <form className={classes.form} noValidate onSubmit={save}>
+                <form className={classes.form} noValidate={false} onSubmit={save}>
                     <TextField
                         variant="outlined"
                         margin="normal"

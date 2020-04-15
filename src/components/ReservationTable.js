@@ -1,78 +1,80 @@
-import React from 'react';
-import MaterialTable from 'material-table';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-class ReservationTable extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-          columns: [
-            { title: 'Name', field: 'name' },
-            { title: 'Surname', field: 'surname', initialEditValue: 'initial edit value' },
-            { title: 'Birth Year', field: 'birthYear', type: 'numeric' },
-            {
-              title: 'Birth Place',
-              field: 'birthCity',
-              lookup: { 34: 'İstanbul', 63: 'Şanlıurfa' },
-            },
-          ],
-          data: [
-            { name: 'Mehmet', surname: 'Baran', birthYear: 1987, birthCity: 63 },
-            { name: 'Zerya Betül', surname: 'Baran', birthYear: 2017, birthCity: 34 },
-          ]
-        }
-      }
-    
-      render() {
-        return (
-          <MaterialTable
-            options={{
-                rowStyle: {
-                    fontSize: 240,
-                }
-            }}
-            title="Editable Preview"
-            columns={this.state.columns}
-            data={this.state.data}
-            editable={{
-              onRowAdd: newData =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    {
-                      const data = this.state.data;
-                      data.push(newData);
-                      this.setState({ data }, () => resolve());
-                    }
-                    resolve()
-                  }, 1000)
-                }),
-              onRowUpdate: (newData, oldData) =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    {
-                      const data = this.state.data;
-                      const index = data.indexOf(oldData);
-                      data[index] = newData;
-                      this.setState({ data }, () => resolve());
-                    }
-                    resolve()
-                  }, 1000)
-                }),
-              onRowDelete: oldData =>
-                new Promise((resolve, reject) => {
-                  setTimeout(() => {
-                    {
-                      let data = this.state.data;
-                      const index = data.indexOf(oldData);
-                      data.splice(index, 1);
-                      this.setState({ data }, () => resolve());
-                    }
-                    resolve()
-                  }, 1000)
-                }),
-            }}
-          />
-        )
-      }
+import MaterialTable from 'material-table';
+import { userActions } from '../actions';
+
+
+function ReservationTable () {
+  const users = useSelector(state => state.users);
+  const dispatch = useDispatch();
+
+  let [clients, setClients] = useState({columns: [], data: []});
+
+  useEffect(() => {
+    if (users.items.length > 0) {
+      setClients({
+        columns: [
+          { title: 'First Name', field: 'firstName' },
+          { title: 'Last Name', field: 'lastName', initialEditValue: 'initial edit value' },
+          { title: 'Date Of reservation', field: 'datetime' },
+          { title: 'Outlet', field: 'outlet' },
+        ],
+        data: users.items
+      });
+    }
+}, [users.items.length]);
+
+  return (
+    <MaterialTable
+      options={{
+          rowStyle: {
+              fontSize: 240,
+          }
+      }}
+      title="Editable Preview"
+      columns={clients.columns}
+      data={clients.data}
+      editable={{
+        onRowAdd: newData =>
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              {
+                const data = clients.data;
+                data.push(newData);
+                setClients({ data }, () => resolve());
+              }
+              resolve()
+            }, 1000)
+          }),
+        onRowUpdate: (newData, oldData) =>
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              {
+                const data = clients.data;
+                const index = data.indexOf(oldData);
+                data[index] = newData;
+                setClients({ data }, () => resolve());
+              }
+              resolve()
+            }, 1000)
+          }),
+        onRowDelete: oldData =>
+          new Promise((resolve, reject) => {
+            setTimeout(() => {
+              {
+                let data = clients.data;
+                const index = data.indexOf(oldData);
+                dispatch(userActions.delete(oldData.id));
+                data.splice(index, 1);
+                setClients({ data }, () => resolve());
+              }
+              resolve()
+            }, 1000)
+          }),
+      }}
+    />
+  );
 }
 
 export default ReservationTable ;

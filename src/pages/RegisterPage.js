@@ -88,7 +88,7 @@ function RegisterPage(props) {
             {props.alert.message &&
                 <Alert severity={`${props.alert.type}`}>{props.alert.message}</Alert>
             }
-            <form className={classes.form} noValidate onSubmit={save}>
+            <form className={classes.form} noValidate={false} onSubmit={save}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={6}>
                   <TextField

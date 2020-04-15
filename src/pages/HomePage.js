@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import DateTimePicker from 'react-datetime-picker';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import { userActions } from '../actions';
@@ -15,6 +14,7 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -24,8 +24,9 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems } from '../components/Menu';
+import Menu from '../components/Menu';
 import Chart from '../components/Chart';
+import { Alert } from '@material-ui/lab';
 
 function Copyright() {
     return (
@@ -123,8 +124,12 @@ const useStyles = makeStyles((theme) => ({
         '& .MuiTextField-root': {
             margin: theme.spacing(1),
             width: 500,
+        },
+        marginBottom: 14,
     },
-  },
+    alert: {
+      marginBottom: 25,
+    }
 }));
 
 function HomePage(props) {
@@ -135,9 +140,9 @@ function HomePage(props) {
         outlet: '',
     });
 
-    let [submitted, setSubmitted] = useState(false);
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
+
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -155,11 +160,27 @@ function HomePage(props) {
 
     let save = (e) => {
         e.preventDefault();
-        setSubmitted(true);
         if (client.firstName && client.lastName, client.datetime, client.outlet) {
             props.addReservation(client);
+            document.getElementById("myForm").reset();
         }
     }
+
+    let getTodayDate = (e) => {
+      var today = new Date();
+      var currentMonth = today.getMonth() + 1;
+      var currentHour = today.getHours();
+      if (currentMonth < 10) {
+        currentMonth = "0" + currentMonth;
+      }
+      if (currentHour < 10) {
+        currentHour = "0" + currentHour;
+      }
+      var date = today.getFullYear() + "-" + currentMonth + "-" + today.getDate();
+      var time = currentHour + ":" + today.getMinutes();
+      return date + "T" + time;
+    }
+
 
     return (
         <div className={classes.root}>
@@ -198,7 +219,7 @@ function HomePage(props) {
               </IconButton>
             </div>
             <Divider />
-            <List>{mainListItems}</List>
+            <List><Menu/></List>
           </Drawer>
           <main className={classes.content}>
             <div className={classes.appBarSpacer} />
@@ -207,7 +228,7 @@ function HomePage(props) {
                 {/* Chart */}
                 <Grid item xs={12}>
                   <Paper className={fixedHeightPaper}>
-                    <Chart />
+                    <Chart/>
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>
@@ -215,8 +236,11 @@ function HomePage(props) {
                     <Typography variant="h6" gutterBottom>
                         Add Reservation
                     </Typography>
+                    {props.alert.message &&
+                            <Alert className={classes.alert} severity={`${props.alert.type}`}>{props.alert.message}</Alert>
+                        }
                     <Grid container spacing={3}>
-                        <form className={classes.form} onSubmit={save} noValidate autoComplete="off">
+                        <form className={classes.form} onSubmit={save} id="myForm" noValidate={false} autoComplete="off">
                             <div>
                                 <TextField
                                     required
@@ -240,11 +264,14 @@ function HomePage(props) {
                                     id="datetime-local"
                                     label="Next appointment"
                                     type="datetime-local"
-                                    defaultValue="2017-05-24T10:30"
+                                    name="datetime"
+                                    defaultValue={getTodayDate().toString()}
                                     className={classes.textField}
                                     InputLabelProps={{
                                     shrink: true,
                                     }}
+                                    onChange={handleChange}
+                                    required
                                 />
                                 <TextField
                                     required
@@ -254,6 +281,16 @@ function HomePage(props) {
                                     variant="outlined"
                                     onChange={handleChange}
                                 />
+                            </div>
+                            <div>
+                              <Button
+                                  type="submit"
+                                  variant="contained"
+                                  color="primary"
+                                  className={classes.submit}
+                              >
+                                  Add Reservation
+                              </Button>
                             </div>
                         </form>
                     </Grid>
@@ -271,9 +308,9 @@ function HomePage(props) {
 
 function mapState(state) {
     const { authentication } = state;
-    const { addingReservation } = state.reservation;
+    const { alert } = state;
     const { user } = authentication;
-    return { user, addingReservation };
+    return { user, alert };
 }
 
 const actionCreators = {
