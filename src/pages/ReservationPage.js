@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
@@ -12,7 +11,6 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Button from '@material-ui/core/Button';
 import Badge from '@material-ui/core/Badge';
 import Container from '@material-ui/core/Container';
 import Grid from '@material-ui/core/Grid';
@@ -125,15 +123,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ReservationPage(props) {
-    let [client, setClient] = useState({
-        firstName: '',
-        lastName: '',
-        datetime: '',
-        outlet: '',
-    });
-
-    let [submitted, setSubmitted] = useState(false);
+function ReservationPage() {
     const classes = useStyles();
     const [open, setOpen] = React.useState(true);
 
@@ -144,21 +134,6 @@ function ReservationPage(props) {
         setOpen(false);
     };
     const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
-
-    let handleChange = (e) => {
-        let name = e.target.name;
-        let value = e.target.value;
-        client[name] = value;
-        setClient(client);
-    }
-
-    let save = (e) => {
-        e.preventDefault();
-        setSubmitted(true);
-        if (client.firstName && client.lastName, client.datetime, client.outlet) {
-            props.addReservation(client);
-        }
-    }
 
     return (
         <div className={classes.root}>
@@ -175,7 +150,7 @@ function ReservationPage(props) {
                 <MenuIcon />
               </IconButton>
               <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                Dashboard
+                Reservation Page
               </Typography>
               <IconButton color="inherit">
                 <Badge badgeContent={4} color="secondary">
@@ -206,7 +181,7 @@ function ReservationPage(props) {
                 {/* Chart */}
                 <Grid item xs={12}>
                   <Paper className={fixedHeightPaper}>
-                    <Chart reload={submitted} />
+                    <Chart/>
                   </Paper>
                 </Grid>
                 <Grid item xs={12}>
@@ -227,11 +202,4 @@ function ReservationPage(props) {
       );
 }
 
-function mapState(state) {
-}
-
-const actionCreators = {
-}
-
-const connectedReservationPage = connect(mapState, actionCreators)(ReservationPage);
-export { connectedReservationPage as ReservationPage };
+export { ReservationPage };

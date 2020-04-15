@@ -53,7 +53,6 @@ function LoginPage(props) {
         username: '',
         password: '',
     });
-    let [submitted, setSubmitted] = useState(false);
 
     let handleChange = (e) => {
         let name = e.target.name;
@@ -64,7 +63,6 @@ function LoginPage(props) {
 
     let save = (e) => {
         e.preventDefault();
-        setSubmitted(true);
         if (user.username && user.password) {
             props.login(user.username, user.password);
         }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
 import { userActions } from '../actions';
@@ -160,7 +160,7 @@ function HomePage(props) {
 
     let save = (e) => {
         e.preventDefault();
-        if (client.firstName && client.lastName, client.datetime, client.outlet) {
+        if (client.firstName && client.lastName && client.datetime && client.outlet) {
             props.addReservation(client);
             document.getElementById("myForm").reset();
         }

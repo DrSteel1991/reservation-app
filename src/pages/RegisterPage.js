@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
 
-import { userActions, alertActions } from '../actions';
+import { userActions } from '../actions';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -58,7 +58,6 @@ function RegisterPage(props) {
         username: '',
         password: ''
     });
-    let [submitted, setSubmitted] = useState(false);
 
     let handleChange = (e) => {
         let name = e.target.name;
@@ -69,8 +68,7 @@ function RegisterPage(props) {
 
     let save = (e) => {
         e.preventDefault();
-        setSubmitted(true);
-        if (user.username && user.password, user.username && user.password) {
+        if (user.firstName && user.lastName && user.username && user.password) {
             props.register(user);
         }
     }
