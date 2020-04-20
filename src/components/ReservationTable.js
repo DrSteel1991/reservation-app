@@ -23,7 +23,7 @@ function ReservationTable () {
         data: users.items
       });
     }
-}, [users.items.length]);
+}, [users.items]);
 
   return (
     <MaterialTable
@@ -36,29 +36,6 @@ function ReservationTable () {
       columns={clients.columns}
       data={clients.data}
       editable={{
-        onRowAdd: newData =>
-          new Promise((resolve, reject) => {
-            setTimeout(() => {
-              {
-                const data = clients.data;
-                data.push(newData);
-                setClients({ data }, () => resolve());
-              }
-              resolve()
-            }, 1000)
-          }),
-        onRowUpdate: (newData, oldData) =>
-          new Promise((resolve, reject) => {
-            setTimeout(() => {
-              {
-                const data = clients.data;
-                const index = data.indexOf(oldData);
-                data[index] = newData;
-                setClients({ data }, () => resolve());
-              }
-              resolve()
-            }, 1000)
-          }),
         onRowDelete: oldData =>
           new Promise((resolve, reject) => {
             setTimeout(() => {
@@ -67,7 +44,7 @@ function ReservationTable () {
                 const index = data.indexOf(oldData);
                 dispatch(userActions.delete(oldData.id));
                 data.splice(index, 1);
-                setClients({ data }, () => resolve());
+                setClients(data);
               }
               resolve()
             }, 1000)

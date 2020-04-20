@@ -27,7 +27,7 @@ export default function Chart() {
   
   useEffect(() => {
       dispatch(userActions.getAll());
-  }, []);
+  }, [dispatch]);
 
 
   const theme = useTheme();
