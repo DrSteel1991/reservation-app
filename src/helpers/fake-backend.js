@@ -8,31 +8,45 @@ export function configureFakeBackend() {
             setTimeout(() => {
 
                 if (url.endsWith('/users/authenticate') && opts.method === 'POST') {
-                    let params = JSON.parse(opts.body);
-
-                    let filteredUsers = users.filter(user => {
-                        return user.username === params.username && user.password === params.password;
-                    });
-
-                    if (filteredUsers.length) {
-                        let user = filteredUsers[0];
-                        let responseJson = {
-                            id: user.id,
-                            username: user.username,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            token: 'fake-jwt-token'
+                    let LoggedInUser = JSON.parse(opts.body);
+                    let responseJson = {};
+                    if (LoggedInUser.type === 'facebookLogin') {
+                        let userExists = users.filter(user => { return user.username === LoggedInUser.username; }).length;
+                        if (!userExists) {
+                            users.push(LoggedInUser);
+                        }
+                        responseJson = {
+                            id: LoggedInUser.id,
+                            username: LoggedInUser.username,
+                            firstName: LoggedInUser.firstName,
+                            lastName: LoggedInUser.lastName,
+                            token: LoggedInUser.password
                         };
                         resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(responseJson)) });
                     } else {
-                        reject('Username or password is incorrect');
+                        let filteredUsers = users.filter(user => {
+                            return user.username === LoggedInUser.username && user.password === LoggedInUser.password;
+                        });
+                        if (filteredUsers.length) {
+                            let user = filteredUsers[0];
+                            responseJson = {
+                                id: user.id,
+                                username: user.username,
+                                firstName: user.firstName,
+                                lastName: user.lastName,
+                                token: 'fake-jwt-token'
+                            };
+                            resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(responseJson)) });
+                        } else {
+                            reject('Username or password is incorrect');
+                        }
                     }
-
                     return;
                 }
 
                 if (url.endsWith('/clients') && opts.method === 'GET') {
-                    if (opts.headers && opts.headers.Authorization === 'Bearer fake-jwt-token') {
+                    let currentUser = JSON.parse(localStorage.getItem('user'));
+                    if (opts.headers && opts.headers.Authorization === 'Bearer '+ currentUser.token) {
                         resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(clients))});
                     } else {
                         reject('Unauthorised');
@@ -72,7 +86,8 @@ export function configureFakeBackend() {
                 }
 
                 if (url.match(/\/clients\/\d+$/) && opts.method === 'DELETE') {
-                    if (opts.headers && opts.headers.Authorization === 'Bearer fake-jwt-token') {
+                    let currentUser = JSON.parse(localStorage.getItem('user'));
+                    if (opts.headers && opts.headers.Authorization === 'Bearer '+ currentUser.token) {
                         let urlParts = url.split('/');
                         let id = parseInt(urlParts[urlParts.length - 1]);
                         for (let i = 0; i < clients.length; i++) {

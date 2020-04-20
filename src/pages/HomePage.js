@@ -27,6 +27,7 @@ import NotificationsIcon from '@material-ui/icons/Notifications';
 import Menu from '../components/Menu';
 import Chart from '../components/Chart';
 import { Alert } from '@material-ui/lab';
+import { getTodayDate } from '../helpers';
 
 function Copyright() {
     return (
@@ -136,7 +137,7 @@ function HomePage(props) {
     let [client, setClient] = useState({
         firstName: '',
         lastName: '',
-        datetime: '',
+        datetime: getTodayDate().toString(),
         outlet: '',
     });
 
@@ -166,30 +167,6 @@ function HomePage(props) {
         }
     }
 
-    let getTodayDate = (e) => {
-      var today = new Date();
-      var currentMonth = today.getMonth() + 1;
-      var currentHour = today.getHours();
-      var currentMinute = today.getMinutes();
-      var currentDate = today.getDate();
-      if (currentMonth < 10) {
-        currentMonth = "0" + currentMonth;
-      }
-      if (currentDate < 10) {
-        currentDate = "0" + currentDate;
-      }
-      if (currentHour < 10) {
-        currentHour = "0" + currentHour;
-      }
-      if (currentMinute < 10) {
-        currentMinute = "0" + currentMinute;
-      }
-      var date = today.getFullYear() + "-" + currentMonth + "-" + currentDate;
-      var time = currentHour + ":" + currentMinute;
-      return date + "T" + time;
-    }
-
-
     return (
         <div className={classes.root}>
           <CssBaseline />
@@ -205,7 +182,7 @@ function HomePage(props) {
                 <MenuIcon />
               </IconButton>
               <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-                Dashboard
+                Welcome {props.user.firstName} {props.user.lastName}
               </Typography>
               <IconButton color="inherit">
                 <Badge badgeContent={4} color="secondary">
@@ -276,7 +253,7 @@ function HomePage(props) {
                                     defaultValue={getTodayDate().toString()}
                                     className={classes.textField}
                                     InputLabelProps={{
-                                    shrink: true,
+                                      shrink: true,
                                     }}
                                     onChange={handleChange}
                                     required

@@ -13,6 +13,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { Alert } from '@material-ui/lab';
+import FacebookLogin from 'react-facebook-login';
 
 function Copyright() {
     return (
@@ -52,6 +53,10 @@ function LoginPage(props) {
     let [user, setUser] = useState({
         username: '',
         password: '',
+        firstName: '',
+        lastName: '',
+        id: '',
+        type: 'appLogin'
     });
 
     let handleChange = (e) => {
@@ -66,6 +71,17 @@ function LoginPage(props) {
         if (user.username && user.password) {
             props.login(user.username, user.password);
         }
+    }
+
+    const responseFacebook = (response) => {
+        const fullName = response.name;
+        user['username'] = response.email;
+        user['password'] = response.accessToken;
+        user['id'] = response.userId;
+        user['firstName'] = fullName.split(' ').slice(0, -1).join(' ');
+        user['lastName'] = fullName.split(' ').slice(-1).join(' ');
+        user['type'] = 'facebookLogin';
+        props.login(user.username, user.password, user.firstName, user.lastName, user.id, user.type);
     }
 
     return (
@@ -114,6 +130,14 @@ function LoginPage(props) {
                     >
                         Sign In
                     </Button>
+                    <div>
+                        <FacebookLogin
+                            appId="532941894261305"
+                            fields="name,email,picture"
+                            callback={responseFacebook} 
+                            cssClass="MuiButton-label"
+                        />
+                    </div>
                     <Link href="/register">Sign Up</Link>
                 </form>
             </div>
